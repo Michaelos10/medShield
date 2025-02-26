@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:bmi_calculator/components/icon_content.dart';
-import 'package:bmi_calculator/components/reusable_card.dart';
-import 'package:bmi_calculator/constants.dart';
-import 'package:bmi_calculator/screens/results_page.dart';
-import 'package:bmi_calculator/components/bottom_button.dart';
-import 'package:bmi_calculator/components/round_icon_button.dart';
-import 'package:bmi_calculator/calculator_brain.dart';
+import 'package:medshield/components/icon_content.dart';
+import 'package:medshield/components/reusable_card.dart';
+import 'package:medshield/constants.dart';
+import 'package:medshield/screens/results_page.dart';
+import 'package:medshield/components/bottom_button.dart';
+import 'package:medshield/components/round_icon_button.dart';
+import 'package:medshield/calculator_brain.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:medshield/asyn_functions.dart';
 
 enum Gender {
   male,
@@ -28,41 +31,68 @@ class _InputPageState extends State<InputPage> {
   int heartRate = 0;
 
   @override
+  void initState() {
+    super.initState();
+    getHealthData(); // Fetch data on startup
+  }
+
+  void getHealthData() async {
+    final data = await fetchHealthData(); // Fetch data from Firebase
+
+    if (data != null) {
+      setState(() {
+        heartRate = (data["bpm"] ?? heartRate).toInt();
+        oxygen = (data["spo2"] ?? oxygen).toDouble();
+        temperature = (data["temperature"] ?? temperature).toDouble();
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('MedShield'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: getHealthData,
+          ),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Expanded(
-              child: Row(
-            children: <Widget>[
-              Expanded(
-                child: ReusableCard(
-                  colour: kActiveCardColour,
-                  icon: FontAwesomeIcons.lungs, // Oxygen level
-                  label: 'OXYGEN',
-                  value: oxygen != null ? '${oxygen}%' : '-',
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: ReusableCard(
+                    colour: kActiveCardColour,
+                    icon: FontAwesomeIcons.lungs,
+                    label: 'OXYGEN',
+                    value: oxygen > 0 ? '${oxygen.toStringAsFixed(1)}%' : '-',
+                  ),
                 ),
-              ),
-              Expanded(
-                child: ReusableCard(
-                  colour: kActiveCardColour,
-                  icon: FontAwesomeIcons.thermometerHalf, // Body temperature
-                  label: 'TEMPERATURE',
-                  value: temperature != null ? '${temperature}°C' : '-',
+                Expanded(
+                  child: ReusableCard(
+                    colour: kActiveCardColour,
+                    icon: FontAwesomeIcons.thermometerHalf,
+                    label: 'TEMPERATURE',
+                    value: temperature > 0
+                        ? '${temperature.toStringAsFixed(1)}°C'
+                        : '-',
+                  ),
                 ),
-              ),
-            ],
-          )),
+              ],
+            ),
+          ),
           Expanded(
             child: ReusableCard(
               colour: kActiveCardColour,
-              icon: FontAwesomeIcons.heartbeat, // Heart rate
+              icon: FontAwesomeIcons.heartbeat,
               label: 'HEART RATE',
-              value: heartRate != null ? '${heartRate}bpm' : '-',
+              value: heartRate > 0 ? '$heartRate bpm' : '-',
             ),
           ),
           Row(
@@ -71,7 +101,7 @@ class _InputPageState extends State<InputPage> {
                 child: ReusableCard(
                   colour: kActiveCardColour,
                   label: 'WEIGHT',
-                  value: weight != null ? weight.toString() : '-',
+                  value: weight > 0 ? weight.toString() : '-',
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -100,7 +130,7 @@ class _InputPageState extends State<InputPage> {
                 child: ReusableCard(
                   colour: kActiveCardColour,
                   label: 'AGE',
-                  value: age != null ? age.toString() : '-',
+                  value: age > 0 ? age.toString() : '-',
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[

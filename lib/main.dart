@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bmi_calculator/screens/input_page.dart';
+import 'package:medshield/screens/input_page.dart';
 import 'package:device_preview/device_preview.dart'; // Helper method for reusable text boxes
 
 // void main() => runApp(

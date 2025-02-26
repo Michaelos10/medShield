@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bmi_calculator/constants.dart';
+import 'package:medshield/constants.dart';
 
 class ReusableCard extends StatelessWidget {
   const ReusableCard({

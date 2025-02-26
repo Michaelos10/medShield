@@ -25,7 +25,7 @@ class HealthMonitor {
     }
 
     // Temperature Analysis
-    if (temperature > 100.4) {
+    if (temperature > 38) {
       if (age < 5) {
         condition +=
             "Fever detected, possibly due to an infection in a young child.\n";

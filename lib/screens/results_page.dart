@@ -3,9 +3,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
-import 'package:bmi_calculator/constants.dart';
-import 'package:bmi_calculator/components/reusable_card.dart';
-import 'package:bmi_calculator/components/bottom_button.dart';
+import 'package:medshield/constants.dart';
+import 'package:medshield/components/reusable_card.dart';
+import 'package:medshield/components/bottom_button.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ResultsPage extends StatelessWidget {
